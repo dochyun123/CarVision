@@ -23,7 +23,11 @@ app = FastAPI(title="Car Model Prediction API")
 import os
 
 # 환경 변수에서 허용할 Origin 가져오기 (Docker 환경 대응)
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost").split(",")
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "https://carvisionwebsite.up.railway.app",
+    "http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost",
+).split(",")
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,6 +36,9 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+print("ALLOWED_ORIGINS =", ALLOWED_ORIGINS)
+
 
 # config 로드
 with open("config.yaml", "r") as f:
