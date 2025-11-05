@@ -63,8 +63,39 @@ Thumbs.db
 temp/
 tmp/
 
+wandb/
+
 # Unused files
 website.js
-
-# Optional - deployment documentation
 RAILWAY_DEPLOYMENT.md
+
+# Test and development files
+test.py
+test*.jpg
+test*.png
+testTucson2.jpg
+*.ipynb
+model_check.py
+main.py
+train.py
+check_weight_loading.py
+*.csv
+export_classnames.py
+model.py
+dataloader.py
+debug_onnx.py
+Tucson_preprocessed_cropped.png
+Tucson2_cropped.png
+
+# Temporary/test images
+Q5.png
+Q5-removebg.png
+Q5_preprocessed.png
+*-removebg.png
+*_preprocessed.png
+nul
+0.26.0
+0.26.0_
+*.zip
+포드.jpg
+*.pth

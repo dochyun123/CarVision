@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Backend (FastAPI + ONNX)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: hecto-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgomp.so.1
+    restart: unless-stopped
+    networks:
+      - hecto-network
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (React + Vite + Nginx)
+  frontend:
+    build:
+      context: ./car-finder
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://backend:8000
+    container_name: hecto-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - hecto-network
+    environment:
+      - VITE_API_URL=http://backend:8000
+
+networks:
+  hecto-network:
+    driver: bridge

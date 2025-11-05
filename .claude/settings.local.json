@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(findstr \"numpy torch\")",
+      "Bash(pip install \"numpy<2.0\")",
+      "Bash(npm install:*)",
+      "Bash(docker compose:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

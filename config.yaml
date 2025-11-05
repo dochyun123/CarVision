@@ -1,0 +1,12 @@
+"IMG_SIZE": 380
+"BATCH_SIZE": 8
+"EPOCHS": 10
+"LEARNING_RATE": 0.0001
+"SEED": 42
+"WEIGHT_DECAY": 0
+"LABEL_SMOOTHING": 0
+"WEIGHT": "Efficientnet_bestmodel.pth"
+"MODEL_NAME": "focal_loss"
+"START_EPOCH": 0
+"DROPOUT_RATE": 0.4
+"GAMMA": 2.0
