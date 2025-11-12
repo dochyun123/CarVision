@@ -10,7 +10,7 @@ import onnxruntime as ort
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import yaml
-from rembg import remove
+from rembg import remove, new_session
 import os
 import time
 
@@ -69,6 +69,13 @@ print(
 print(
     f"출력: {onnx_session.get_outputs()[0].name}, shape: {onnx_session.get_outputs()[0].shape}"
 )
+print("=" * 70 + "\n")
+
+# Rembg 세션 (전역으로 한 번만 로드)
+print("=" * 70)
+print("🔥 Rembg 세션 로딩 중 (cold start)...")
+rembg_session = new_session("u2net")
+print("✅ Rembg 세션 로드 완료 (메모리에 캐시됨)")
 print("=" * 70 + "\n")
 
 
@@ -135,14 +142,14 @@ async def predict(image: UploadFile = File(...)):
         t1 = time.time()
         print(f"   ✓ 이미지 수신 완료: {t1 - tstart:.2f}초")
 
-        # 2. 배경 제거
-        print("2. 배경 제거 중...")
-        removed_bg = remove(pil_image)
+        # 2. 배경 제거 (캐시된 세션 사용)
+        print("2. 배경 제거 중 (캐시된 세션 사용)...")
+        removed_bg = remove(pil_image, session=rembg_session)
         if isinstance(removed_bg, bytes):
             removed_bg = Image.open(io.BytesIO(removed_bg))
         t2 = time.time()
         print(f"   ✓ 배경 제거 완료: {removed_bg.size}, {removed_bg.mode}")
-        print(f"   ✓ 배경 제거 소요 시간: {t2 - t1:.2f}초")
+        print(f"   ✓ 배경 제거 소요 시간: {t2 - t1:.2f}초 (캐시된 세션)")
 
         # 3. 자동 크롭 (여백 제거)
         print("3. 자동 크롭 중...")

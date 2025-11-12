@@ -21,6 +21,10 @@ RUN pip install --no-cache-dir -r requirements.docker.txt && \
     find /usr/local/lib/python3.12 -type f -name '*.pyo' -delete && \
     rm -rf /root/.cache/pip
 
+# ✅ Rembg u2net 모델을 미리 다운로드 (cold start 최적화)
+RUN mkdir -p /root/.u2net && \
+    python -c "from rembg import new_session; print('🔥 Downloading u2net model...'); new_session('u2net'); print('✅ u2net model downloaded and cached')"
+
 # 애플리케이션 파일 복사
 COPY api_server.py .
 COPY inference.py .
