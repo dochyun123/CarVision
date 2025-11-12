@@ -7,8 +7,9 @@ services:
       context: .
       dockerfile: Dockerfile.backend
     container_name: hecto-backend
-    ports:
-      - "8000:8000"
+    # 외부 포트 노출 제거 (nginx를 통해서만 접근)
+    expose:
+      - "8000"
     environment:
       - PYTHONUNBUFFERED=1
       - LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgomp.so.1
@@ -32,17 +33,38 @@ services:
       context: ./car-finder
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://backend:8000
+        - VITE_API_URL=/api
     container_name: hecto-frontend
-    ports:
-      - "80:80"
+    # 외부 포트 노출 제거 (nginx를 통해서만 접근)
+    expose:
+      - "80"
     depends_on:
       - backend
     restart: unless-stopped
     networks:
       - hecto-network
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=/api
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: hecto-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - hecto-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   hecto-network:
